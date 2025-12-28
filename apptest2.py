@@ -1167,7 +1167,6 @@ def main():
         analysis_mode = st.radio("분석 모드 선택", ["종합 분석", "개별 지표 분석"], horizontal=True)
         
         if analysis_mode == "종합 분석":
-            # ============ 수정된 부분 시작 ============
             st.markdown("#### 종합 유동성 분석")
             
             col_depth, col_btn = st.columns([3, 1])
@@ -1198,7 +1197,6 @@ def main():
                         st.session_state['comprehensive_depth'] = comprehensive_depth
                     except Exception as e:
                         st.error(f"분석 중 오류: {str(e)}")
-            # ============ 수정된 부분 끝 ============
             
             if 'comprehensive_analysis' in st.session_state:
                 # 분석 깊이 표시
@@ -1448,7 +1446,8 @@ def main():
                             
                             st.markdown(response)
                             st.session_state.advanced_chat_messages.append({"role": "assistant", "content": response})
-    
+
+  
     with tab5:
         st.markdown("""
         ### 📖 유동성 지표 해석 가이드
@@ -1500,6 +1499,8 @@ def main():
     st.markdown("### 🚨 위험 신호 분석")
     
     risk_signals = []
+    rp_change_7d = 0.0
+    rrp_change_7d = 0.0
     
     for indicator in ['RP', 'RRP', 'Reserves', 'Spread']:
         if assessment['assessments'][indicator]['score'] <= 1:
@@ -1507,60 +1508,78 @@ def main():
     
     if len(df) >= 7:
         rp_change_7d = ((df['RP'].iloc[-1] - df['RP'].iloc[-7]) / df['RP'].iloc[-7]) * 100 if df['RP'].iloc[-7] != 0 else 0
-        rrp_change_7d = ((df['RRP'].iloc[-1] - df['RRP'].iloc[-7]) / df['RRP'].iloc[-7]) * 100 if df['RRP'].
-
-
-    if abs(rp_change_7d) > 50:
-        risk_signals.append(f"🔥 **RP 급변동**: 7일 변화율 {rp_change_7d:+.1f}%")
+        rrp_change_7d = ((df['RRP'].iloc[-1] - df['RRP'].iloc[-7]) / df['RRP'].iloc[-7]) * 100 if df['RRP'].iloc[-7] != 0 else 0
+        
+        if abs(rp_change_7d) > 50:
+            risk_signals.append(f"🔥 **RP 급변동**: 7일 변화율 {rp_change_7d:+.1f}%")
+        
+        if abs(rrp_change_7d) > 30:
+            risk_signals.append(f"🔥 **RRP 급변동**: 7일 변화율 {rrp_change_7d:+.1f}%")
     
-    if abs(rrp_change_7d) > 30:
-        risk_signals.append(f"🔥 **RRP 급변동**: 7일 변화율 {rrp_change_7d:+.1f}%")
+    if risk_signals:
+        for signal in risk_signals:
+            st.warning(signal)
+    else:
+        st.success("✅ 현재 심각한 위험 신호 없음")
+    
+    # 데이터 다운로드
+    st.markdown("---")
+    st.markdown("### 💾 데이터 다운로드")
+    
+    col1_d, col2_d = st.columns(2)
+    
+    with col1_d:
+        csv_data = df.to_csv()
+        st.download_button(
+            "📊 전체 데이터 다운로드 (CSV)",
+            csv_data,
+            f"liquidity_data_{datetime.now().strftime('%Y%m%d_%H%M')}.csv",
+            "text/csv",
+            key="download_csv_btn"
+        )
+    
+    with col2_d:
+        report = f"""# 연준 유동성 종합 리포트
+생성 일시: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
 
-if risk_signals:
-    for signal in risk_signals:
-        st.warning(signal)
-else:
-    st.success("✅ 현재 심각한 위험 신호 없음")
+## 종합 평가
+- 상태: {assessment['overall']['status']}
+- 점수: {assessment['overall']['score']}/{assessment['overall']['max_score']}
+- 메시지: {assessment['overall']['message']}
+- 권고사항: {assessment['overall']['recommendation']}
 
-# 데이터 다운로드
-st.markdown("---")
-st.markdown("### 💾 데이터 다운로드")
+## 주요 지표
+- RP: ${assessment['latest_values']['RP']:.2f}B - {assessment['assessments']['RP']['level']}
+- RRP: ${assessment['latest_values']['RRP']:.2f}B - {assessment['assessments']['RRP']['level']}
+- 지준금: ${assessment['latest_values']['Reserves']:.2f}B - {assessment['assessments']['Reserves']['level']}
+- 스프레드: {assessment['latest_values']['Spread']:.2f}bps - {assessment['assessments']['Spread']['level']}
 
-col1_d, col2_d = st.columns(2)
-
-with col1_d:
-    csv_data = df.to_csv()
-    st.download_button(
-        "📊 전체 데이터 다운로드 (CSV)",
-        csv_data,
-        f"liquidity_data_{datetime.now().strftime('%Y%m%d_%H%M')}.csv",
-        "text/csv",
-        key="download_csv_btn"
+## 위험 신호
+{chr(10).join(risk_signals) if risk_signals else '현재 심각한 위험 신호 없음'}
+"""
+        
+        st.download_button(
+            "📄 종합 리포트 다운로드 (TXT)",
+            report,
+            f"liquidity_report_{datetime.now().strftime('%Y%m%d_%H%M')}.txt",
+            "text/plain",
+            key="download_report_btn"
+        )
+    
+    # 푸터
+    st.markdown("---")
+    st.markdown(
+        """
+        <div style='text-align: center; color: gray; padding: 20px;'>
+            <p>🏦 연준 유동성 스트레스 모니터링 대시보드 v3.0</p>
+            <p>데이터 출처: FRED (Federal Reserve Economic Data) | AI: Gemini 2.0 Flash + OpenAI GPT-4</p>
+            <p>⚠️ 본 분석은 투자 권유가 아니며, 참고 목적으로만 활용하시기 바랍니다.</p>
+        </div>
+        """,
+        unsafe_allow_html=True
     )
 
-with col2_d:
-    report = f"""
 
-st.download_button(
-        "📄 종합 리포트 다운로드 (TXT)",
-        report,
-        f"liquidity_report_{datetime.now().strftime('%Y%m%d_%H%M')}.txt",
-        "text/plain",
-        key="download_report_btn"
-    )
-
-# 푸터
-st.markdown("---")
-st.markdown(
-    """
-    <div style='text-align: center; color: gray; padding: 20px;'>
-        <p>🏦 연준 유동성 스트레스 모니터링 대시보드 v3.0</p>
-        <p>데이터 출처: FRED (Federal Reserve Economic Data) | AI: Gemini 2.0 Flash + OpenAI GPT-4</p>
-        <p>⚠️ 본 분석은 투자 권유가 아니며, 참고 목적으로만 활용하시기 바랍니다.</p>
-    </div>
-    """,
-    unsafe_allow_html=True
-)
-
-
-
+if __name__ == "__main__":
+    main()    
+    
