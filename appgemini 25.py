@@ -474,7 +474,7 @@ Gemini API 키가 설정되지 않았습니다.
         max_tokens = 2048
     
     try:
-        model = genai.GenerativeModel('gemini-2.0-flash-exp')
+        model = genai.GenerativeModel('gemini-2.5-flash')
         generation_config = {
             'max_output_tokens': max_tokens,
             'temperature': 0.7,
@@ -656,7 +656,7 @@ def generate_gemini_analysis_deep_dive(df, assessment):
 """
     
     try:
-        model = genai.GenerativeModel('gemini-2.0-flash-exp')
+        model = genai.GenerativeModel('gemini-2.5-flash')
         
         safety_settings = [
             {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_NONE"},
@@ -858,7 +858,7 @@ Gemini API 키가 설정되지 않았습니다.
     final_prompt = base_prompt + analysis_request
     
     try:
-        model = genai.GenerativeModel('gemini-2.0-flash-exp')
+        model = genai.GenerativeModel('gemini-2.5-flash')
         generation_config = {
             'max_output_tokens': max_tokens,
             'temperature': 0.7,
