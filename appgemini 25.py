@@ -471,12 +471,12 @@ Gemini API 키가 설정되지 않았습니다.
 
 간결하고 실용적인 분석을 부탁드립니다. 전문 용어 사용 시 간단한 설명을 추가해주세요.
 """
-        max_tokens = 2048
+        max_tokens = 8192
     
     try:
         model = genai.GenerativeModel('GEMINI_MODEL_CHAT')
         generation_config = {
-            'max_output_tokens': max_tokens,
+            'max_output_tokens': 8192,
             'temperature': 0.7,
         }
         response = model.generate_content(prompt, generation_config=generation_config)
@@ -668,7 +668,7 @@ def generate_gemini_analysis_deep_dive(df, assessment):
         response = model.generate_content(
             prompt, 
             generation_config={
-                'max_output_tokens': 4096,
+                'max_output_tokens': 8192,
                 'temperature': 0.7
             },
             safety_settings=safety_settings
@@ -789,7 +789,7 @@ Gemini API 키가 설정되지 않았습니다.
 
 **응답 형식**: 문단형 위주, 필요시 bullet 3~5개 이내
 """
-        max_tokens = 1024
+        max_tokens = 4096
         
     else:  # 딥다이브
         analysis_request = f"""
@@ -853,14 +853,14 @@ Gemini API 키가 설정되지 않았습니다.
 - bullet points 적극 활용 (각 항목 5~10개)
 - 표나 리스트 형태로 정리된 정보 포함
 """
-        max_tokens = 3072
+        max_tokens = 8192
     
     final_prompt = base_prompt + analysis_request
     
     try:
         model = genai.GenerativeModel('GEMINI_MODEL_CHAT')
         generation_config = {
-            'max_output_tokens': max_tokens,
+            'max_output_tokens': 8192,
             'temperature': 0.7,
         }
         response = model.generate_content(final_prompt, generation_config=generation_config)
