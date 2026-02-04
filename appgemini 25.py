@@ -351,7 +351,7 @@ class EnhancedDualAIHandler:
             if not GEMINI_AVAILABLE: 
                 return "⚠️ Gemini API 설정이 필요합니다."
             try:
-                model = genai.GenerativeModel(GEMINI_MODEL_CHAT)
+                model = genai.GenerativeModel('gemini-2.5-flash')
                 
                 full_prompt = system_instruction + "\n\n[이전 대화 내역]\n"
                 for msg in chat_history[-10:]:
@@ -474,7 +474,7 @@ Gemini API 키가 설정되지 않았습니다.
         max_tokens = 8192
     
     try:
-        model = genai.GenerativeModel('GEMINI_MODEL_CHAT')
+        model = genai.GenerativeModel('gemini-2.5-flash')
         generation_config = {
             'max_output_tokens': 8192,
             'temperature': 0.7,
@@ -656,7 +656,7 @@ def generate_gemini_analysis_deep_dive(df, assessment):
 """
     
     try:
-        model = genai.GenerativeModel('GEMINI_MODEL_CHAT')
+        model = genai.GenerativeModel('gemini-2.5-flash')
         
         safety_settings = [
             {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_NONE"},
@@ -858,7 +858,7 @@ Gemini API 키가 설정되지 않았습니다.
     final_prompt = base_prompt + analysis_request
     
     try:
-        model = genai.GenerativeModel('GEMINI_MODEL_CHAT')
+        model = genai.GenerativeModel('gemini-2.5-flash')
         generation_config = {
             'max_output_tokens': 8192,
             'temperature': 0.7,
