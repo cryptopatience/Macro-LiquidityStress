@@ -89,7 +89,7 @@ except Exception as e:
 
 # 모델 설정
 OPENAI_MODEL_CHAT = st.secrets.get("OPENAI_MODEL_CHAT", "gpt-4o")
-GEMINI_MODEL_CHAT = "gemini-3-pro"
+GEMINI_MODEL_CHAT = "gemini-2.5-flash"
 
 fred = Fred(api_key=FRED_API_KEY)
 
