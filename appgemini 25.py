@@ -89,7 +89,7 @@ except Exception as e:
 
 # 모델 설정
 OPENAI_MODEL_CHAT = st.secrets.get("OPENAI_MODEL_CHAT", "gpt-4o")
-GEMINI_MODEL_CHAT = "gemini-2.5-flash"
+GEMINI_MODEL_CHAT = "gemini-3-pro"
 
 fred = Fred(api_key=FRED_API_KEY)
 
@@ -474,7 +474,7 @@ Gemini API 키가 설정되지 않았습니다.
         max_tokens = 2048
     
     try:
-        model = genai.GenerativeModel('gemini-2.5-flash')
+        model = genai.GenerativeModel('GEMINI_MODEL_CHAT')
         generation_config = {
             'max_output_tokens': max_tokens,
             'temperature': 0.7,
@@ -656,7 +656,7 @@ def generate_gemini_analysis_deep_dive(df, assessment):
 """
     
     try:
-        model = genai.GenerativeModel('gemini-2.5-flash')
+        model = genai.GenerativeModel('GEMINI_MODEL_CHAT')
         
         safety_settings = [
             {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_NONE"},
@@ -858,7 +858,7 @@ Gemini API 키가 설정되지 않았습니다.
     final_prompt = base_prompt + analysis_request
     
     try:
-        model = genai.GenerativeModel('gemini-2.5-flash')
+        model = genai.GenerativeModel('GEMINI_MODEL_CHAT')
         generation_config = {
             'max_output_tokens': max_tokens,
             'temperature': 0.7,
