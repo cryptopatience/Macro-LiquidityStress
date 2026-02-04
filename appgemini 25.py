@@ -476,7 +476,7 @@ Gemini API 키가 설정되지 않았습니다.
     try:
         model = genai.GenerativeModel('gemini-2.5-flash')
         generation_config = {
-            'max_output_tokens': 8192,
+            'max_output_tokens': 32768,
             'temperature': 0.7,
         }
         response = model.generate_content(prompt, generation_config=generation_config)
@@ -668,7 +668,7 @@ def generate_gemini_analysis_deep_dive(df, assessment):
         response = model.generate_content(
             prompt, 
             generation_config={
-                'max_output_tokens': 8192,
+                'max_output_tokens': 32768,
                 'temperature': 0.7
             },
             safety_settings=safety_settings
@@ -860,7 +860,7 @@ Gemini API 키가 설정되지 않았습니다.
     try:
         model = genai.GenerativeModel('gemini-2.5-flash')
         generation_config = {
-            'max_output_tokens': 8192,
+            'max_output_tokens': 32768,
             'temperature': 0.7,
         }
         response = model.generate_content(final_prompt, generation_config=generation_config)
